@@ -1,8 +1,11 @@
-project('gl-shader-loader','cpp')
+project('gl-shader-loader','cpp',
+    version:'0.1.0',
+    default_options:['buildtype=release'])
 src_assembler=run_command('./srcAssembler.py',check:true)
 sources=src_assembler.stdout().strip().split('\n')
 include_dir='./include'
-shader_loader=library('gl-shader-loader',sources,include_directories:[include_dir],dependencies:[])
+glbinding=dependency('glbinding')
+shader_loader=library('gl-shader-loader',sources,include_directories:[include_dir],dependencies:[glbinding])
 
 
 pkg=import('pkgconfig')
