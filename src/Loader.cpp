@@ -53,6 +53,7 @@ unsigned int Loader::loadvf(const char *vsPath, const char *fsPath)
         glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLen);
         infoLog.resize(infoLogLen);
         glGetShaderInfoLog(vertexShader, infoLogLen, nullptr, infoLog.data());
+        infoLog.push_back('\0');
         glDeleteShader(vertexShader);
         cout << "Unable to compile shader at " << vsPath << "\n";
         cout << infoLog.data() << "\n";
@@ -72,6 +73,7 @@ unsigned int Loader::loadvf(const char *vsPath, const char *fsPath)
         glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &infoLogLen);
         infoLog.resize(infoLogLen);
         glGetShaderInfoLog(fragmentShader, infoLogLen, nullptr, infoLog.data());
+        infoLog.push_back('\0');
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
         cout << "Unable to compile shader at " << fsPath << "\n";
@@ -90,6 +92,7 @@ unsigned int Loader::loadvf(const char *vsPath, const char *fsPath)
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLen);
         infoLog.resize(infoLogLen);
         glGetProgramInfoLog(program, infoLogLen, nullptr, infoLog.data());
+        infoLog.push_back('\0');
         glDetachShader(program, vertexShader);
         glDetachShader(program, fragmentShader);
         glDeleteShader(vertexShader);
