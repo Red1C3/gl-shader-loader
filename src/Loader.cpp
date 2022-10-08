@@ -45,14 +45,16 @@ unsigned int Loader::loadvf(const char *vsPath, const char *fsPath)
     glShaderSource(vertexShader, 1, &vsData, &vsSize);
     glCompileShader(vertexShader);
     int infoLogLen;
-    vector<char> infoLog;
+    glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLen);
+    vector<char> infoLog(infoLogLen);
+    glGetShaderInfoLog(vertexShader, infoLogLen, nullptr, infoLog.data());
+    if (infoLogLen > 0)
+        cout << vsPath << " Info Log:\n"
+             << infoLog.data() << "\n";
     GLboolean status;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status);
     if (status == GL_FALSE)
     {
-        glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLen);
-        infoLog.resize(infoLogLen);
-        glGetShaderInfoLog(vertexShader, infoLogLen, nullptr, infoLog.data());
         glDeleteShader(vertexShader);
         cout << "Unable to compile shader at " << vsPath << "\n";
         cout << infoLog.data() << "\n";
@@ -66,12 +68,15 @@ unsigned int Loader::loadvf(const char *vsPath, const char *fsPath)
     int fsSize = fragmentShaderCode.size();
     glShaderSource(fragmentShader, 1, &fsData, &fsSize);
     glCompileShader(fragmentShader);
+    glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &infoLogLen);
+    infoLog.resize(infoLogLen);
+    glGetShaderInfoLog(fragmentShader, infoLogLen, nullptr, infoLog.data());
+    if (infoLogLen > 0)
+        cout << fsPath << " Info Log:\n"
+             << infoLog.data() << "\n";
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &status);
     if (status == GL_FALSE)
     {
-        glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &infoLogLen);
-        infoLog.resize(infoLogLen);
-        glGetShaderInfoLog(fragmentShader, infoLogLen, nullptr, infoLog.data());
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
         cout << "Unable to compile shader at " << fsPath << "\n";
@@ -84,12 +89,15 @@ unsigned int Loader::loadvf(const char *vsPath, const char *fsPath)
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
     glLinkProgram(program);
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLen);
+    infoLog.resize(infoLogLen);
+    glGetProgramInfoLog(program, infoLogLen, nullptr, infoLog.data());
+    if (infoLogLen > 0)
+        cout << vsPath << "+" << fsPath << " Linkage Info Log:\n"
+             << infoLog.data() << "\n";
     glGetProgramiv(program, GL_LINK_STATUS, &status);
     if (status == GL_FALSE)
     {
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLen);
-        infoLog.resize(infoLogLen);
-        glGetProgramInfoLog(program, infoLogLen, nullptr, infoLog.data());
         glDetachShader(program, vertexShader);
         glDetachShader(program, fragmentShader);
         glDeleteShader(vertexShader);
